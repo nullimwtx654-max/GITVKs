@@ -1,0 +1,185 @@
+name: Build Clone Box with microG
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    name: Build Clone Box + microG APKs
+    runs-on: ubuntu-latest
+    env:
+      GRADLE_MICROG_VERSION_WITHOUT_GIT: "1"
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Normalize Project Root & Free Disk Space
+        run: |
+          sudo sysctl -w fs.inotify.max_user_instances=1280 fs.inotify.max_user_watches=655360 || true
+          sudo rm -rf /opt/hostedtoolcache/CodeQL || true
+          sudo rm -rf /opt/hostedtoolcache/go || true
+          if [ ! -f "settings.gradle" ]; then
+            ZIP_FILE=$(find . -maxdepth 2 -name "*.zip" | head -n 1)
+            if [ -n "$ZIP_FILE" ]; then
+              echo "Extracting uploaded archive $ZIP_FILE..."
+              unzip -oq "$ZIP_FILE"
+            fi
+            SUB_SETTINGS=$(find . -maxdepth 3 -name "settings.gradle" | head -n 1)
+            if [ -n "$SUB_SETTINGS" ] && [ "$SUB_SETTINGS" != "./settings.gradle" ]; then
+              SUB_DIR=$(dirname "$SUB_SETTINGS")
+              echo "Moving project files from $SUB_DIR to workspace root..."
+              shopt -s dotglob
+              mv -f "$SUB_DIR"/* . || true
+              shopt -u dotglob
+            fi
+          fi
+          df -h
+
+      - name: Set up JDK 17 and JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: |
+            21
+            17
+          cache: 'gradle'
+
+      - name: Configure Android SDK and Licenses
+        run: |
+          SDK_DIR="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          if [ ! -d "$SDK_DIR" ] && [ -d "$HOME/Android/Sdk" ]; then
+            SDK_DIR="$HOME/Android/Sdk"
+          fi
+          export ANDROID_HOME="$SDK_DIR"
+          export ANDROID_SDK_ROOT="$SDK_DIR"
+          echo "ANDROID_HOME=$SDK_DIR" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK_DIR" >> "$GITHUB_ENV"
+
+          sudo mkdir -p "$SDK_DIR/licenses"
+          printf "\n8933bad161af4178b1185d1a37fbf41ea5269c55\nd56f5187479451eabf01fb78af6dfcb131a6481e\n24333f8a63b6825ea9c5514f83c2829b004d1fee\n859f317696f67ef3d7f30a50a5560e7834b43903\n" | sudo tee "$SDK_DIR/licenses/android-sdk-license" >/dev/null
+          printf "\n84831b9409646a918e30573bab4c9c91346d8abd\n504667f4c0de7af1a06de9f4b1727b84351f2910\n" | sudo tee "$SDK_DIR/licenses/android-sdk-preview-license" >/dev/null
+          sudo chmod -R a+rwX "$SDK_DIR/licenses" || true
+
+          echo "sdk.dir=$SDK_DIR" > local.properties
+          if [ -d "gms-core" ]; then
+            echo "sdk.dir=$SDK_DIR" > gms-core/local.properties
+          fi
+
+          echo "Using ANDROID_HOME=$SDK_DIR"
+          ls -la "$SDK_DIR/platforms" || true
+          ls -la "$SDK_DIR/build-tools" || true
+          ls -la "$SDK_DIR/ndk" || true
+
+      - name: Grant execute permissions for gradlew
+        run: |
+          sed -i 's/\r$//' ./gradlew || true
+          chmod +x ./gradlew
+          if [ -f "./gms-core/gradlew" ]; then
+            sed -i 's/\r$//' ./gms-core/gradlew || true
+            chmod +x ./gms-core/gradlew
+          fi
+
+      - name: Build or Fetch microG (GmsCore & FakeStore)
+        run: |
+          mkdir -p Bcore/src/main/assets/gms
+          if [ -d "gms-core" ] && (cd gms-core && ./gradlew :play-services-core:assembleMapboxDefaultRelease :vending-app:assembleDefaultRelease --no-daemon --stacktrace); then
+            GMS_APK=$(find ./gms-core/play-services-core/build/outputs/apk -name "com.google.android.gms-*.apk" ! -name "*unsigned*" | head -n 1)
+            VENDING_APK=$(find ./gms-core/vending-app/build/outputs/apk -name "com.android.vending-*.apk" ! -name "*unsigned*" | head -n 1)
+            if [ -n "$GMS_APK" ] && [ -f "$GMS_APK" ]; then
+              cp -f "$GMS_APK" Bcore/src/main/assets/gms/GmsCore.apk
+            fi
+            if [ -n "$VENDING_APK" ] && [ -f "$VENDING_APK" ]; then
+              cp -f "$VENDING_APK" Bcore/src/main/assets/gms/FakeStore.apk
+            fi
+          else
+            echo "Fetching official microG release APKs..."
+          fi
+
+          if [ ! -f Bcore/src/main/assets/gms/GmsCore.apk ] || [ ! -s Bcore/src/main/assets/gms/GmsCore.apk ]; then
+            curl -L --fail --retry 3 -o Bcore/src/main/assets/gms/GmsCore.apk "https://github.com/microg/GmsCore/releases/download/v0.3.9.250932/com.google.android.gms-250932018.apk" || \
+            curl -L --fail --retry 3 -o Bcore/src/main/assets/gms/GmsCore.apk "https://github.com/microg/GmsCore/releases/download/v0.3.13.250932/com.google.android.gms-250932022.apk" || \
+            curl -L --fail --retry 3 -o Bcore/src/main/assets/gms/GmsCore.apk "https://github.com/microg/GmsCore/releases/download/v0.3.17.252432/com.google.android.gms-252432034.apk" || \
+            curl -L --fail --retry 3 -o Bcore/src/main/assets/gms/GmsCore.apk "https://github.com/microg/GmsCore/releases/download/v0.3.16.252432/com.google.android.gms-252432032.apk"
+          fi
+
+          if [ ! -f Bcore/src/main/assets/gms/FakeStore.apk ] || [ ! -s Bcore/src/main/assets/gms/FakeStore.apk ]; then
+            curl -L --fail --retry 3 -o Bcore/src/main/assets/gms/FakeStore.apk "https://github.com/microg/GmsCore/releases/download/v0.3.17.252432/com.android.vending-84022634.apk" || \
+            curl -L --fail --retry 3 -o Bcore/src/main/assets/gms/FakeStore.apk "https://github.com/microg/GmsCore/releases/download/v0.3.16.252432/com.android.vending-84022632.apk" || \
+            curl -L --fail --retry 3 -o Bcore/src/main/assets/gms/FakeStore.apk "https://github.com/microg/GmsCore/releases/download/v0.3.15.250932/com.android.vending-84022630.apk" || \
+            curl -L --fail --retry 3 -o Bcore/src/main/assets/gms/FakeStore.apk "https://github.com/microg/GmsCore/releases/download/v0.3.13.250932/com.android.vending-84022622.apk"
+          fi
+
+          ls -lh Bcore/src/main/assets/gms/
+          test -s Bcore/src/main/assets/gms/GmsCore.apk
+          test -s Bcore/src/main/assets/gms/FakeStore.apk
+
+      - name: Build Clone Box APKs and Bcore AARs
+        run: |
+          if ! ./gradlew assembleDebug assembleRelease :Bcore:assembleDebug :Bcore:assembleRelease :black-reflection:assemble :compiler:assemble --no-daemon --stacktrace; then
+            echo "Retrying Gradle build with JDK 21 ($JAVA_HOME_21_X64)..."
+            if [ -n "$JAVA_HOME_21_X64" ] && [ -d "$JAVA_HOME_21_X64" ]; then
+              export JAVA_HOME="$JAVA_HOME_21_X64"
+              export PATH="$JAVA_HOME/bin:$PATH"
+            fi
+            ./gradlew assembleDebug assembleRelease :Bcore:assembleDebug :Bcore:assembleRelease :black-reflection:assemble :compiler:assemble --no-daemon --stacktrace
+          fi
+
+      - name: Upload Clone Box Release & Debug APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: CloneBox-APKs
+          path: |
+            app/build/outputs/apk/debug/*.apk
+            app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+
+      - name: Upload Bundled microG APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: microG-APKs
+          path: |
+            Bcore/src/main/assets/gms/*.apk
+
+      - name: Upload Bcore AARs
+        uses: actions/upload-artifact@v4
+        with:
+          name: Bcore-AARs
+          path: |
+            Bcore/build/outputs/aar/*.aar
+
+      - name: Publish APKs to GitHub Releases
+        if: github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v2
+        continue-on-error: true
+        with:
+          tag_name: latest-build
+          name: "Clone Box + microG Latest Build"
+          body: "Automated build of Clone Box (Made by Akshay Tiwary) with integrated microG, anti-detection, and experimental 120Hz@60Hz / 6GB RAM / Punch-Hole display spoofing."
+          prerelease: false
+          files: |
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/apk/debug/*.apk
+            Bcore/build/outputs/aar/*.aar
+
+      - name: Send Artifacts to Telegram (Optional)
+        if: env.TELEGRAM_BOT_TOKEN != '' && env.TELEGRAM_CHAT_ID != ''
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%s || echo "Manual Build")
+          for APK in ./app/build/outputs/apk/release/*.apk ./app/build/outputs/apk/debug/*.apk; do
+            if [ -f "$APK" ]; then
+              curl -s -F document=@"$APK" -F chat_id="$TELEGRAM_CHAT_ID" -F caption="[CloneBox+microG] $(basename "$APK") - $COMMIT_MSG" "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendDocument" || true
+            fi
+          done
