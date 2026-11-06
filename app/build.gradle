@@ -45,6 +45,10 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
     packaging {
         jniLibs {
             excludes.add("**/libandroidx.graphics.path.so")

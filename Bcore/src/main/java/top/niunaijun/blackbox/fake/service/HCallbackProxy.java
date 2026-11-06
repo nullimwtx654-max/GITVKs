@@ -301,7 +301,13 @@ public class HCallbackProxy implements IInjectHook, Handler.Callback {
                 ActivityThreadActivityClientRecordContext clientRecordContext = BRActivityThreadActivityClientRecord.get(r);
                 clientRecordContext._set_intent(stubRecord.mTarget);
                 clientRecordContext._set_activityInfo(activityInfo);
+                try {
+                    clientRecordContext._set_packageInfo(BActivityThread.currentActivityThread().getPackageInfo());
+                } catch (Throwable ignored) {
+                }
             }
+            top.niunaijun.blackbox.utils.ErrorLogCapturer.logStartup("ACTIVITY_LAUNCH",
+                    "Launching activity " + activityInfo.name + " in package " + activityInfo.packageName);
         }
         return false;
     }

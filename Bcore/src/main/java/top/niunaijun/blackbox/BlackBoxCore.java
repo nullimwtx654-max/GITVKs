@@ -812,6 +812,10 @@ public class BlackBoxCore extends ClientConfiguration {
 
         sContext = context;
         mClientConfiguration = clientConfiguration;
+        try {
+            top.niunaijun.blackbox.utils.ErrorLogCapturer.init(context);
+        } catch (Throwable ignored) {
+        }
         
         
         installSystemHooks();

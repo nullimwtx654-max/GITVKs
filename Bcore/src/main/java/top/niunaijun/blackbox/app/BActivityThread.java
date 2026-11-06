@@ -328,6 +328,8 @@ public class BActivityThread extends IBActivityThread.Stub {
             return;
         try {
             CrashHandler.create();
+            top.niunaijun.blackbox.utils.ErrorLogCapturer.init(BlackBoxCore.getContext());
+            top.niunaijun.blackbox.utils.ErrorLogCapturer.logStartup("BIND_APP_START", "Binding package=" + packageName + " process=" + processName);
         } catch (Throwable ignored) {
         }
 
@@ -375,12 +377,20 @@ public class BActivityThread extends IBActivityThread.Stub {
 
         VirtualRuntime.setupRuntime(processName, applicationInfo);
 
-        // Cap VMRuntime targetSdkVersion at Android P (28) so Android 14+ (API 34+) Read-Only DCL
-        // does not reject dynamically downloaded dex/apk files (such as microG DroidGuard's the.apk).
-        int effectiveVmTargetSdk = Math.min(applicationInfo.targetSdkVersion, Build.VERSION_CODES.P);
-        BRVMRuntime.get(BRVMRuntime.get().getRuntime()).setTargetSdkVersion(effectiveVmTargetSdk);
+        // Preserve the cloned app's real targetSdkVersion so modern Android apps work across all OS versions;
+        // only cap microG at Android P (28) for DroidGuard dynamic dex loading.
+        int effectiveVmTargetSdk = top.niunaijun.blackbox.core.GmsCore.isGoogleAppOrService(packageName)
+                ? Math.min(applicationInfo.targetSdkVersion, Build.VERSION_CODES.P)
+                : applicationInfo.targetSdkVersion;
+        try {
+            BRVMRuntime.get(BRVMRuntime.get().getRuntime()).setTargetSdkVersion(effectiveVmTargetSdk);
+        } catch (Throwable ignored) {
+        }
         if (BuildCompat.isS()) {
-            BRCompatibility.get().setTargetSdkVersion(effectiveVmTargetSdk);
+            try {
+                BRCompatibility.get().setTargetSdkVersion(effectiveVmTargetSdk);
+            } catch (Throwable ignored) {
+            }
         }
 
         NativeCore.init(Build.VERSION.SDK_INT);
@@ -444,7 +454,9 @@ public class BActivityThread extends IBActivityThread.Stub {
             onAfterApplicationOnCreate(packageName, processName, application);
 
             HookManager.get().checkEnv(HCallbackProxy.class);
+            top.niunaijun.blackbox.utils.ErrorLogCapturer.logStartup("BIND_APP_SUCCESS", "Successfully bound " + packageName + " (" + processName + ")");
         } catch (Exception e) {
+            top.niunaijun.blackbox.utils.ErrorLogCapturer.logCrash("BIND_APP_ERROR", "Critical error in handleBindApplication for " + packageName, e);
             Slog.e(TAG, "Critical error in handleBindApplication", e);
             throw new RuntimeException("Unable to makeApplication", e);
         }

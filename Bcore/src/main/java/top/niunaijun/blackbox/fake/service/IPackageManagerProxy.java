@@ -456,7 +456,8 @@ public class IPackageManagerProxy extends BinderInvocationStub {
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
             Intent intent = MethodParameterUtils.getFirstParam(args, Intent.class);
             String type = MethodParameterUtils.getFirstParam(args, String.class);
-            Integer flags = MethodParameterUtils.getFirstParam(args, Integer.class);
+            Integer flagsObj = MethodParameterUtils.getFirstParam(args, Integer.class);
+            int flags = flagsObj != null ? flagsObj : (args != null && args.length > 2 ? MethodParameterUtils.toInt(args[2]) : 0);
             List<ResolveInfo> resolves = BlackBoxCore.getBPackageManager().queryBroadcastReceivers(intent, flags, type, BActivityThread.getUserId());
             Slog.d(TAG, "queryIntentReceivers: " + resolves);
 

@@ -552,7 +552,8 @@
             android:exported="true"
             android:process=":p0"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p0"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P1"
@@ -560,7 +561,8 @@
             android:exported="true"
             android:process=":p1"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p1"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P2"
@@ -568,7 +570,8 @@
             android:exported="true"
             android:process=":p2"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p2"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P3"
@@ -576,7 +579,8 @@
             android:exported="true"
             android:process=":p3"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p3"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P4"
@@ -584,7 +588,8 @@
             android:exported="true"
             android:process=":p4"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p4"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P5"
@@ -592,7 +597,8 @@
             android:exported="true"
             android:process=":p5"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p5"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P6"
@@ -600,7 +606,8 @@
             android:exported="true"
             android:process=":p6"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p6"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P7"
@@ -608,7 +615,8 @@
             android:exported="true"
             android:process=":p7"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p7"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P8"
@@ -616,7 +624,8 @@
             android:exported="true"
             android:process=":p8"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p8"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P9"
@@ -624,7 +633,8 @@
             android:exported="true"
             android:process=":p9"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p9"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P10"
@@ -632,7 +642,8 @@
             android:exported="true"
             android:process=":p10"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p10"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P11"
@@ -640,7 +651,8 @@
             android:exported="true"
             android:process=":p11"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p11"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P12"
@@ -648,7 +660,8 @@
             android:exported="true"
             android:process=":p12"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p12"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P13"
@@ -656,7 +669,8 @@
             android:exported="true"
             android:process=":p13"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p13"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P14"
@@ -664,7 +678,8 @@
             android:exported="true"
             android:process=":p14"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p14"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P15"
@@ -672,7 +687,8 @@
             android:exported="true"
             android:process=":p15"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p15"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P16"
@@ -680,7 +696,8 @@
             android:exported="true"
             android:process=":p16"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p16"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P17"
@@ -688,7 +705,8 @@
             android:exported="true"
             android:process=":p17"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p17"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P18"
@@ -696,7 +714,8 @@
             android:exported="true"
             android:process=":p18"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p18"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P19"
@@ -704,7 +723,8 @@
             android:exported="true"
             android:process=":p19"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p19"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P20"
@@ -712,7 +732,8 @@
             android:exported="true"
             android:process=":p20"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p20"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P21"
@@ -720,7 +741,8 @@
             android:exported="true"
             android:process=":p21"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p21"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P22"
@@ -728,7 +750,8 @@
             android:exported="true"
             android:process=":p22"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p22"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P23"
@@ -736,7 +759,8 @@
             android:exported="true"
             android:process=":p23"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p23"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P24"
@@ -744,7 +768,8 @@
             android:exported="true"
             android:process=":p24"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p24"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P25"
@@ -752,7 +777,8 @@
             android:exported="true"
             android:process=":p25"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p25"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P26"
@@ -760,7 +786,8 @@
             android:exported="true"
             android:process=":p26"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p26"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P27"
@@ -768,7 +795,8 @@
             android:exported="true"
             android:process=":p27"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p27"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P28"
@@ -776,7 +804,8 @@
             android:exported="true"
             android:process=":p28"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p28"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P29"
@@ -784,7 +813,8 @@
             android:exported="true"
             android:process=":p29"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p29"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P30"
@@ -792,7 +822,8 @@
             android:exported="true"
             android:process=":p30"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p30"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P31"
@@ -800,7 +831,8 @@
             android:exported="true"
             android:process=":p31"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p31"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P32"
@@ -808,7 +840,8 @@
             android:exported="true"
             android:process=":p32"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p32"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P33"
@@ -816,7 +849,8 @@
             android:exported="true"
             android:process=":p33"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p33"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P34"
@@ -824,7 +858,8 @@
             android:exported="true"
             android:process=":p34"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p34"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P35"
@@ -832,7 +867,8 @@
             android:exported="true"
             android:process=":p35"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p35"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P36"
@@ -840,7 +876,8 @@
             android:exported="true"
             android:process=":p36"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p36"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P37"
@@ -848,7 +885,8 @@
             android:exported="true"
             android:process=":p37"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p37"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P38"
@@ -856,7 +894,8 @@
             android:exported="true"
             android:process=":p38"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p38"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P39"
@@ -864,7 +903,8 @@
             android:exported="true"
             android:process=":p39"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p39"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P40"
@@ -872,7 +912,8 @@
             android:exported="true"
             android:process=":p40"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p40"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P41"
@@ -880,7 +921,8 @@
             android:exported="true"
             android:process=":p41"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p41"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P42"
@@ -888,7 +930,8 @@
             android:exported="true"
             android:process=":p42"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p42"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P43"
@@ -896,7 +939,8 @@
             android:exported="true"
             android:process=":p43"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p43"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P44"
@@ -904,7 +948,8 @@
             android:exported="true"
             android:process=":p44"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p44"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P45"
@@ -912,7 +957,8 @@
             android:exported="true"
             android:process=":p45"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p45"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P46"
@@ -920,7 +966,8 @@
             android:exported="true"
             android:process=":p46"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p46"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P47"
@@ -928,7 +975,8 @@
             android:exported="true"
             android:process=":p47"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p47"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P48"
@@ -936,7 +984,8 @@
             android:exported="true"
             android:process=":p48"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p48"
             android:theme="@style/BTheme" />
         <activity
             android:name=".proxy.ProxyActivity$P49"
@@ -944,7 +993,8 @@
             android:exported="true"
             android:process=":p49"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p49"
             android:theme="@style/BTheme" />
 
 
@@ -954,7 +1004,8 @@
             android:exported="true"
             android:process=":p0"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p0"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P1"
@@ -962,7 +1013,8 @@
             android:exported="true"
             android:process=":p1"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p1"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P2"
@@ -970,7 +1022,8 @@
             android:exported="true"
             android:process=":p2"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p2"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P3"
@@ -978,7 +1031,8 @@
             android:exported="true"
             android:process=":p3"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p3"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P4"
@@ -986,7 +1040,8 @@
             android:exported="true"
             android:process=":p4"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p4"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P5"
@@ -994,7 +1049,8 @@
             android:exported="true"
             android:process=":p5"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p5"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P6"
@@ -1002,7 +1058,8 @@
             android:exported="true"
             android:process=":p6"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p6"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P7"
@@ -1010,7 +1067,8 @@
             android:exported="true"
             android:process=":p7"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p7"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P8"
@@ -1018,7 +1076,8 @@
             android:exported="true"
             android:process=":p8"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p8"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P9"
@@ -1026,7 +1085,8 @@
             android:exported="true"
             android:process=":p9"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p9"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P10"
@@ -1034,7 +1094,8 @@
             android:exported="true"
             android:process=":p10"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p10"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P11"
@@ -1042,7 +1103,8 @@
             android:exported="true"
             android:process=":p11"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p11"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P12"
@@ -1050,7 +1112,8 @@
             android:exported="true"
             android:process=":p12"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p12"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P13"
@@ -1058,7 +1121,8 @@
             android:exported="true"
             android:process=":p13"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p13"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P14"
@@ -1066,7 +1130,8 @@
             android:exported="true"
             android:process=":p14"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p14"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P15"
@@ -1074,7 +1139,8 @@
             android:exported="true"
             android:process=":p15"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p15"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P16"
@@ -1082,7 +1148,8 @@
             android:exported="true"
             android:process=":p16"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p16"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P17"
@@ -1090,7 +1157,8 @@
             android:exported="true"
             android:process=":p17"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p17"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P18"
@@ -1098,7 +1166,8 @@
             android:exported="true"
             android:process=":p18"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p18"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P19"
@@ -1106,7 +1175,8 @@
             android:exported="true"
             android:process=":p19"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p19"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P20"
@@ -1114,7 +1184,8 @@
             android:exported="true"
             android:process=":p20"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p20"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P21"
@@ -1122,7 +1193,8 @@
             android:exported="true"
             android:process=":p21"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p21"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P22"
@@ -1130,7 +1202,8 @@
             android:exported="true"
             android:process=":p22"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p22"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P23"
@@ -1138,7 +1211,8 @@
             android:exported="true"
             android:process=":p23"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p23"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P24"
@@ -1146,7 +1220,8 @@
             android:exported="true"
             android:process=":p24"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p24"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P25"
@@ -1154,7 +1229,8 @@
             android:exported="true"
             android:process=":p25"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p25"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P26"
@@ -1162,7 +1238,8 @@
             android:exported="true"
             android:process=":p26"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p26"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P27"
@@ -1170,7 +1247,8 @@
             android:exported="true"
             android:process=":p27"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p27"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P28"
@@ -1178,7 +1256,8 @@
             android:exported="true"
             android:process=":p28"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p28"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P29"
@@ -1186,7 +1265,8 @@
             android:exported="true"
             android:process=":p29"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p29"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P30"
@@ -1194,7 +1274,8 @@
             android:exported="true"
             android:process=":p30"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p30"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P31"
@@ -1202,7 +1283,8 @@
             android:exported="true"
             android:process=":p31"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p31"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P32"
@@ -1210,7 +1292,8 @@
             android:exported="true"
             android:process=":p32"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p32"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P33"
@@ -1218,7 +1301,8 @@
             android:exported="true"
             android:process=":p33"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p33"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P34"
@@ -1226,7 +1310,8 @@
             android:exported="true"
             android:process=":p34"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p34"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P35"
@@ -1234,7 +1319,8 @@
             android:exported="true"
             android:process=":p35"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p35"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P36"
@@ -1242,7 +1328,8 @@
             android:exported="true"
             android:process=":p36"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p36"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P37"
@@ -1250,7 +1337,8 @@
             android:exported="true"
             android:process=":p37"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p37"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P38"
@@ -1258,7 +1346,8 @@
             android:exported="true"
             android:process=":p38"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p38"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P39"
@@ -1266,7 +1355,8 @@
             android:exported="true"
             android:process=":p39"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p39"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P40"
@@ -1274,7 +1364,8 @@
             android:exported="true"
             android:process=":p40"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p40"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P41"
@@ -1282,7 +1373,8 @@
             android:exported="true"
             android:process=":p41"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p41"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P42"
@@ -1290,7 +1382,8 @@
             android:exported="true"
             android:process=":p42"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p42"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P43"
@@ -1298,7 +1391,8 @@
             android:exported="true"
             android:process=":p43"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p43"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P44"
@@ -1306,7 +1400,8 @@
             android:exported="true"
             android:process=":p44"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p44"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P45"
@@ -1314,7 +1409,8 @@
             android:exported="true"
             android:process=":p45"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p45"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P46"
@@ -1322,7 +1418,8 @@
             android:exported="true"
             android:process=":p46"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p46"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P47"
@@ -1330,7 +1427,8 @@
             android:exported="true"
             android:process=":p47"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p47"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P48"
@@ -1338,7 +1436,8 @@
             android:exported="true"
             android:process=":p48"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p48"
             android:theme="@android:style/Theme.Translucent" />
         <activity
             android:name=".proxy.TransparentProxyActivity$P49"
@@ -1346,7 +1445,8 @@
             android:exported="true"
             android:process=":p49"
             android:supportsPictureInPicture="true"
-            android:taskAffinity="top.niunaijun.blackbox.task_affinity"
+            android:resizeableActivity="true"
+            android:taskAffinity="top.niunaijun.blackbox.task_affinity.p49"
             android:theme="@android:style/Theme.Translucent" />
 
 

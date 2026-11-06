@@ -652,16 +652,36 @@ public class ActivityStack {
 
     @SuppressWarnings("deprecation")
     private void synchronizeTasks() {
-        List<ActivityManager.RecentTaskInfo> recentTasks = mAms.getRecentTasks(100, 0);
-        Map<Integer, TaskRecord> newTacks = new LinkedHashMap<>();
-        for (int i = recentTasks.size() - 1; i >= 0; i--) {
-            ActivityManager.RecentTaskInfo next = recentTasks.get(i);
-            TaskRecord taskRecord = mTasks.get(next.id);
-            if (taskRecord == null)
-                continue;
-            newTacks.put(next.id, taskRecord);
+        try {
+            List<ActivityManager.RecentTaskInfo> recentTasks = mAms.getRecentTasks(100, 0);
+            if (recentTasks == null || recentTasks.isEmpty()) {
+                return;
+            }
+            Map<Integer, TaskRecord> newTacks = new LinkedHashMap<>();
+            for (int i = recentTasks.size() - 1; i >= 0; i--) {
+                ActivityManager.RecentTaskInfo next = recentTasks.get(i);
+                if (next == null) continue;
+                int id = next.id;
+                if (id < 0 && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    id = next.taskId;
+                }
+                if (id < 0) {
+                    id = next.persistentId;
+                }
+                TaskRecord taskRecord = mTasks.get(id);
+                if (taskRecord == null && next.persistentId >= 0) {
+                    taskRecord = mTasks.get(next.persistentId);
+                    if (taskRecord != null) id = next.persistentId;
+                }
+                if (taskRecord == null)
+                    continue;
+                newTacks.put(id, taskRecord);
+            }
+            if (!newTacks.isEmpty()) {
+                mTasks.clear();
+                mTasks.putAll(newTacks);
+            }
+        } catch (Throwable ignored) {
         }
-        mTasks.clear();
-        mTasks.putAll(newTacks);
     }
 }

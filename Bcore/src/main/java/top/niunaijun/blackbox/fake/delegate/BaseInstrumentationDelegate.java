@@ -47,6 +47,10 @@ public class BaseInstrumentationDelegate extends Instrumentation {
 
     @Override
     public boolean onException(Object obj, Throwable e) {
+        try {
+            top.niunaijun.blackbox.utils.ErrorLogCapturer.logCrash("INSTRUMENTATION_ON_EXCEPTION", "Object=" + obj, e);
+        } catch (Throwable ignored) {
+        }
         return mBaseInstrumentation.onException(obj, e);
     }
 

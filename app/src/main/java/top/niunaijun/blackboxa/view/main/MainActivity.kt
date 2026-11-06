@@ -24,6 +24,7 @@ import top.niunaijun.blackboxa.view.apps.AppsFragment
 import top.niunaijun.blackboxa.view.base.LoadingActivity
 import top.niunaijun.blackboxa.view.fake.FakeManagerActivity
 import top.niunaijun.blackboxa.view.list.ListActivity
+import top.niunaijun.blackboxa.view.log.ErrorLogActivity
 import top.niunaijun.blackboxa.view.setting.SettingActivity
 
 class MainActivity : LoadingActivity() {
@@ -416,9 +417,8 @@ class MainActivity : LoadingActivity() {
                 R.id.main_setting -> {
                     SettingActivity.start(this)
                 }
-                R.id.main_tg -> {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/newblackboxa"))
-                    startActivity(intent)
+                R.id.main_error_logs -> {
+                    ErrorLogActivity.start(this)
                 }
                 R.id.fake_location -> {
                     

@@ -100,12 +100,28 @@ public class BProcessManagerService implements ISystemService {
     }
 
     private int getUsingBPidL() {
-        ActivityManager manager = (ActivityManager) BlackBoxCore.getContext().getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = manager.getRunningAppProcesses();
         Set<Integer> usingPs = new HashSet<>();
-        for (ActivityManager.RunningAppProcessInfo runningAppProcess : runningAppProcesses) {
-            int i = parseBPid(runningAppProcess.processName);
-            usingPs.add(i);
+        for (ProcessRecord record : mPidsSelfLocked) {
+            if (record != null && record.bpid >= 0) {
+                if (record.bActivityThread == null || record.bActivityThread.asBinder().isBinderAlive()) {
+                    usingPs.add(record.bpid);
+                }
+            }
+        }
+        try {
+            ActivityManager manager = (ActivityManager) BlackBoxCore.getContext().getSystemService(Context.ACTIVITY_SERVICE);
+            if (manager != null) {
+                List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = manager.getRunningAppProcesses();
+                if (runningAppProcesses != null) {
+                    for (ActivityManager.RunningAppProcessInfo runningAppProcess : runningAppProcesses) {
+                        int i = parseBPid(runningAppProcess.processName);
+                        if (i >= 0) {
+                            usingPs.add(i);
+                        }
+                    }
+                }
+            }
+        } catch (Throwable ignored) {
         }
         for (int i = 0; i < ProxyManifest.FREE_COUNT; i++) {
             if (usingPs.contains(i)) {

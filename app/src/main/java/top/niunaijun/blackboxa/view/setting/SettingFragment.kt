@@ -8,6 +8,7 @@ import top.niunaijun.blackboxa.R
 import top.niunaijun.blackboxa.app.AppManager
 import top.niunaijun.blackboxa.util.toast
 import top.niunaijun.blackboxa.view.gms.GmsManagerActivity
+import top.niunaijun.blackboxa.view.log.ErrorLogActivity
 
 class SettingFragment : PreferenceFragmentCompat() {
 
@@ -15,6 +16,11 @@ class SettingFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.setting, rootKey)
 
         initGms()
+
+        findPreference<Preference>("error_logs")?.setOnPreferenceClickListener {
+            ErrorLogActivity.start(requireContext())
+            true
+        }
 
         invalidHideState {
             val rootHidePreference: Preference = (findPreference("root_hide")!!)
@@ -50,8 +56,6 @@ class SettingFragment : PreferenceFragmentCompat() {
             disableFlagSecurePreference.setDefaultValue(mDisableFlagSecure)
             disableFlagSecurePreference
         }
-
-        initSendLogs()
     }
 
     private fun initGms() {
@@ -106,29 +110,6 @@ class SettingFragment : PreferenceFragmentCompat() {
 
             toast(R.string.restart_module)
             return@setOnPreferenceChangeListener true
-        }
-    }
-
-    private fun initSendLogs() {
-        val sendLogsPreference: Preference? = findPreference("send_logs")
-        sendLogsPreference?.setOnPreferenceClickListener {
-            it.isEnabled = false
-            BlackBoxCore.get()
-                    .sendLogs(
-                            "Manual Log Upload from Settings",
-                            true,
-                            object : BlackBoxCore.LogSendListener {
-                                override fun onSuccess() {
-                                    activity?.runOnUiThread { sendLogsPreference.isEnabled = true }
-                                }
-
-                                override fun onFailure(error: String?) {
-                                    activity?.runOnUiThread { sendLogsPreference.isEnabled = true }
-                                }
-                            }
-                    )
-            toast("Sending logs... (Check notifications for status)")
-            true
         }
     }
 }

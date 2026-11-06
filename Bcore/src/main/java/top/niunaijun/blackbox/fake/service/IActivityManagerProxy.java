@@ -672,51 +672,7 @@ public class IActivityManagerProxy extends ClassInvocationStub {
     }
 
     @ProxyMethod("registerReceiverWithFeature")
-    public static class RegisterReceiverWithFeature extends MethodHook {
-        @Override
-        protected Object hook(Object who, Method method, Object[] args) throws Throwable {
-            MethodParameterUtils.replaceFirstAppPkg(args);
-            int receiverIndex = getReceiverIndex();
-            if (args[receiverIndex] != null) {
-                IIntentReceiver intentReceiver = (IIntentReceiver) args[receiverIndex];
-                IIntentReceiver proxy = InnerReceiverDelegate.createProxy(intentReceiver);
-
-                WeakReference<?> weakReference = BRLoadedApkReceiverDispatcherInnerReceiver.get(intentReceiver).mDispatcher();
-                if (weakReference != null) {
-                    BRLoadedApkReceiverDispatcher.get(weakReference.get())._set_mIIntentReceiver(proxy);
-                }
-
-                args[receiverIndex] = proxy;
-            }
-            if (args[getPermissionIndex()] != null) {
-                args[getPermissionIndex()] = null;
-            }
-
-            if (BuildCompat.isU()) {
-                int flagsIndex = args.length - 1;
-                int flags = (int) args[flagsIndex];
-                if ((flags & RECEIVER_NOT_EXPORTED) == 0 && (flags & RECEIVER_EXPORTED) == 0) {
-                    flags |= RECEIVER_NOT_EXPORTED;
-                }
-                args[flagsIndex] = flags;
-            }
-
-            return method.invoke(who, args);
-        }
-
-        public int getReceiverIndex() {
-            if (BuildCompat.isS()) {
-                return 4;
-            }
-            return 3;
-        }
-
-        public int getPermissionIndex() {
-            if (BuildCompat.isS()) {
-                return 6;
-            }
-            return 5;
-        }
+    public static class RegisterReceiverWithFeature extends RegisterReceiver {
     }
 
     @ProxyMethod("registerReceiver")
@@ -725,21 +681,42 @@ public class IActivityManagerProxy extends ClassInvocationStub {
         @Override
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
             MethodParameterUtils.replaceFirstAppPkg(args);
-            int receiverIndex = 2;
-            if (args[receiverIndex] != null) {
-                IIntentReceiver intentReceiver = (IIntentReceiver) args[receiverIndex];
-                IIntentReceiver proxy = InnerReceiverDelegate.createProxy(intentReceiver);
-
-                WeakReference<?> weakReference = BRLoadedApkReceiverDispatcherInnerReceiver.get(intentReceiver).mDispatcher();
-                if (weakReference != null) {
-                    BRLoadedApkReceiverDispatcher.get(weakReference.get())._set_mIIntentReceiver(proxy);
+            if (args != null) {
+                int filterIndex = -1;
+                int receiverIndex = -1;
+                for (int i = 0; i < args.length; i++) {
+                    if (args[i] instanceof IIntentReceiver && receiverIndex == -1) {
+                        receiverIndex = i;
+                    } else if (args[i] instanceof android.content.IntentFilter && filterIndex == -1) {
+                        filterIndex = i;
+                    }
                 }
-
-                args[receiverIndex] = proxy;
-            }
-            int permissionIndex = 4;
-            if (args[permissionIndex] != null) {
-                args[permissionIndex] = null;
+                if (receiverIndex == -1 && filterIndex > 0) {
+                    receiverIndex = filterIndex - 1;
+                }
+                if (receiverIndex >= 0 && receiverIndex < args.length && args[receiverIndex] instanceof IIntentReceiver) {
+                    IIntentReceiver intentReceiver = (IIntentReceiver) args[receiverIndex];
+                    IIntentReceiver proxy = InnerReceiverDelegate.createProxy(intentReceiver);
+                    try {
+                        WeakReference<?> weakReference = BRLoadedApkReceiverDispatcherInnerReceiver.get(intentReceiver).mDispatcher();
+                        if (weakReference != null && weakReference.get() != null) {
+                            BRLoadedApkReceiverDispatcher.get(weakReference.get())._set_mIIntentReceiver(proxy);
+                        }
+                    } catch (Throwable ignored) {
+                    }
+                    args[receiverIndex] = proxy;
+                }
+                if (filterIndex >= 0 && filterIndex + 1 < args.length && args[filterIndex + 1] instanceof String) {
+                    args[filterIndex + 1] = null;
+                }
+                if (android.os.Build.VERSION.SDK_INT >= 34 && args.length > 0 && args[args.length - 1] instanceof Integer) {
+                    int flagsIndex = args.length - 1;
+                    int flags = (int) args[flagsIndex];
+                    if ((flags & RECEIVER_NOT_EXPORTED) == 0 && (flags & RECEIVER_EXPORTED) == 0) {
+                        flags |= RECEIVER_NOT_EXPORTED;
+                    }
+                    args[flagsIndex] = flags;
+                }
             }
             return method.invoke(who, args);
         }

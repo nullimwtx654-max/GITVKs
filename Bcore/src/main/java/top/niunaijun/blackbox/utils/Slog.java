@@ -1,12 +1,10 @@
-
-
 package top.niunaijun.blackbox.utils;
 
 import android.util.Log;
 
 
 public final class Slog {
-     public static final int LOG_ID_SYSTEM = 3;
+    public static final int LOG_ID_SYSTEM = 3;
 
     private Slog() {
     }
@@ -20,18 +18,15 @@ public final class Slog {
                 msg + '\n' + Log.getStackTraceString(tr));
     }
 
-    
     public static int d(String tag, String msg) {
         return Log.println(Log.DEBUG, tag, msg);
     }
 
-    
     public static int d(String tag, String msg, Throwable tr) {
         return Log.println(Log.DEBUG, tag,
                 msg + '\n' + Log.getStackTraceString(tr));
     }
 
-    
     public static int i(String tag, String msg) {
         return Log.println(Log.INFO, tag, msg);
     }
@@ -41,34 +36,36 @@ public final class Slog {
                 msg + '\n' + Log.getStackTraceString(tr));
     }
 
-    
     public static int w(String tag, String msg) {
         return Log.println(Log.WARN, tag, msg);
     }
 
-    
     public static int w(String tag, String msg, Throwable tr) {
+        ErrorLogCapturer.logError(tag, msg, tr);
         return Log.println(Log.WARN, tag,
                 msg + '\n' + Log.getStackTraceString(tr));
     }
 
     public static int w(String tag, Throwable tr) {
+        ErrorLogCapturer.logError(tag, "Warning exception", tr);
         return Log.println(Log.WARN, tag, Log.getStackTraceString(tr));
     }
 
-    
     public static int e(String tag, String msg) {
+        ErrorLogCapturer.logError(tag, msg, null);
         return Log.println(Log.ERROR, tag, msg);
     }
 
-    
     public static int e(String tag, String msg, Throwable tr) {
+        ErrorLogCapturer.logError(tag, msg, tr);
         return Log.println(Log.ERROR, tag,
                 msg + '\n' + Log.getStackTraceString(tr));
     }
 
     public static int println(int priority, String tag, String msg) {
+        if (priority >= Log.ERROR) {
+            ErrorLogCapturer.logError(tag, msg, null);
+        }
         return Log.println(priority, tag, msg);
     }
 }
-

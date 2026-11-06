@@ -19,6 +19,11 @@
                 android:title="@string/microg_settings"
                 android:summary="@string/microg_settings_summary"/>
 
+        <Preference
+                android:key="error_logs"
+                android:title="@string/error_logs"
+                android:summary="@string/error_logs_summary"/>
+
         <SwitchPreferenceCompat
                 app:key="root_hide"
                 app:title="@string/hide_root" />
@@ -42,11 +47,6 @@
                 app:key="disable_flag_secure"
                 app:title="@string/disable_flag_secure"
                 app:summary="@string/disable_flag_secure_summary" />
-
-        <Preference
-                android:key="send_logs"
-                android:title="Send Logs"
-                android:summary="Upload debug logs to developer" />
 
         <Preference
                 android:key="author_credit"

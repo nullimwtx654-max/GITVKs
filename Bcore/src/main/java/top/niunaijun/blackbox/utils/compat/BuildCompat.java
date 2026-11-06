@@ -9,63 +9,73 @@ public class BuildCompat {
             try {
                 return Build.VERSION.PREVIEW_SDK_INT;
             } catch (Throwable e) {
-                
+                // ignore
             }
         }
         return 0;
     }
 
-    
+    // Android 15 (Vanilla Ice Cream, API 35+)
+    public static boolean isV() {
+        return Build.VERSION.SDK_INT >= 35 || (Build.VERSION.SDK_INT >= 34 && getPreviewSDKInt() >= 1);
+    }
+
+    // Android 14 (Upside Down Cake, API 34+)
     public static boolean isU() {
-        return Build.VERSION.SDK_INT >= 33 || (Build.VERSION.SDK_INT >= 32 && Build.VERSION.PREVIEW_SDK_INT == 1);
+        return Build.VERSION.SDK_INT >= 34 || (Build.VERSION.SDK_INT >= 33 && getPreviewSDKInt() >= 1);
     }
 
-    
+    // Android 13 (Tiramisu, API 33+)
     public static boolean isTiramisu() {
-        return Build.VERSION.SDK_INT >= 32 || (Build.VERSION.SDK_INT >= 31 && Build.VERSION.PREVIEW_SDK_INT == 1);
+        return Build.VERSION.SDK_INT >= 33 || (Build.VERSION.SDK_INT >= 32 && getPreviewSDKInt() >= 1);
     }
 
-    
+    // Android 12L (API 32+)
+    public static boolean isS_V2() {
+        return Build.VERSION.SDK_INT >= 32 || (Build.VERSION.SDK_INT >= 31 && getPreviewSDKInt() >= 1);
+    }
+
+    // Android 12 (S, API 31+)
     public static boolean isS() {
-        return Build.VERSION.SDK_INT >= 31 || (Build.VERSION.SDK_INT >= 30 && Build.VERSION.PREVIEW_SDK_INT == 1);
+        return Build.VERSION.SDK_INT >= 31 || (Build.VERSION.SDK_INT >= 30 && getPreviewSDKInt() >= 1);
     }
 
-    
+    // Android 11 (R, API 30+)
     public static boolean isR() {
-        return Build.VERSION.SDK_INT >= 30 || (Build.VERSION.SDK_INT >= 29 && Build.VERSION.PREVIEW_SDK_INT == 1);
+        return Build.VERSION.SDK_INT >= 30 || (Build.VERSION.SDK_INT >= 29 && getPreviewSDKInt() >= 1);
     }
 
-    
+    // Android 10 (Q, API 29+)
     public static boolean isQ() {
-        return Build.VERSION.SDK_INT >= 29 || (Build.VERSION.SDK_INT >= 28 && Build.VERSION.PREVIEW_SDK_INT == 1);
+        return Build.VERSION.SDK_INT >= 29 || (Build.VERSION.SDK_INT >= 28 && getPreviewSDKInt() >= 1);
     }
 
-    
+    // Android 9 (Pie, API 28+)
     public static boolean isPie() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P || (Build.VERSION.SDK_INT >= 27 && Build.VERSION.PREVIEW_SDK_INT == 1);
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P || (Build.VERSION.SDK_INT >= 27 && getPreviewSDKInt() >= 1);
     }
 
-    
+    // Android 8.0 (Oreo, API 26+)
     public static boolean isOreo() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O || (Build.VERSION.SDK_INT >= 25 && Build.VERSION.PREVIEW_SDK_INT == 1);
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O || (Build.VERSION.SDK_INT >= 25 && getPreviewSDKInt() >= 1);
     }
 
-    
+    // Android 7.1 (Nougat MR1, API 25+)
     public static boolean isN_MR1() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 || (Build.VERSION.SDK_INT >= 24 && Build.VERSION.PREVIEW_SDK_INT == 1);
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1 || (Build.VERSION.SDK_INT >= 24 && getPreviewSDKInt() >= 1);
     }
 
-    
+    // Android 7.0 (Nougat, API 24+)
     public static boolean isN() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N || (Build.VERSION.SDK_INT >= 23 && Build.VERSION.PREVIEW_SDK_INT == 1);
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N || (Build.VERSION.SDK_INT >= 23 && getPreviewSDKInt() >= 1);
     }
 
-    
+    // Android 6.0 (Marshmallow, API 23+)
     public static boolean isM() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     }
 
-    
+    // Android 5.0 (Lollipop, API 21+)
     public static boolean isL() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
@@ -107,7 +117,6 @@ public class BuildCompat {
     public static boolean isVivo() {
         return SystemPropertiesCompat.isExist("ro.vivo.os.build.display.id");
     }
-
 
     private static ROMType sRomType;
 

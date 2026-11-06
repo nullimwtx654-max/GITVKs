@@ -342,9 +342,7 @@ public class PackageManagerCompat {
         ai.processName = BPackageManagerService.fixProcessName(p.packageName, ai.packageName);
         ai.publicSourceDir = sourceDir;
         ai.sourceDir = sourceDir;
-        if (p.mExtras != null) {
-            ai.uid = p.mExtras.appId;
-        }
+        ai.uid = BlackBoxCore.getHostUid();
 
         if (GmsCore.isGoogleAppOrService(p.packageName)) {
             ai.flags |= ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP;

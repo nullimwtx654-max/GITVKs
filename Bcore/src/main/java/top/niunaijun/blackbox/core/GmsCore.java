@@ -75,6 +75,13 @@ public class GmsCore {
         return new Signature[]{getGoogleSignature()};
     }
 
+    public static Signature[] getSpoofedSignatures(String packageName) {
+        if (packageName != null && isGoogleAppOrService(packageName)) {
+            return getGoogleSignatures();
+        }
+        return null;
+    }
+
     @SuppressWarnings("NewApi")
     public static SigningInfo createGoogleSigningInfo() {
         return createSigningInfo(getGoogleSignatures());
