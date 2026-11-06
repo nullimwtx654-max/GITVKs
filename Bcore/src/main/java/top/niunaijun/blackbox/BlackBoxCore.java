@@ -1061,6 +1061,11 @@ public class BlackBoxCore extends ClientConfiguration {
 
     public boolean launchApk(String packageName, int userId) {
         onBeforeMainLaunchApk(packageName, userId);
+        try {
+            GmsCore.ensureGmsInstalled(userId);
+        } catch (Throwable t) {
+            Slog.w(TAG, "Auto microG check before launch failed: " + t.getMessage());
+        }
         
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

@@ -116,7 +116,7 @@ public class BPackage implements Parcelable {
             this.permissionGroups.add(selfPermissionGroup);
         }
 
-        this.requestedPermissions = aPackage.requestedPermissions;
+        this.requestedPermissions = aPackage.requestedPermissions != null ? aPackage.requestedPermissions : new ArrayList<>();
         if (BuildCompat.isPie()) {
             this.mSigningDetails = new SigningDetails(aPackage.mSigningDetails);
             this.mSignatures = this.mSigningDetails.signatures;
@@ -134,9 +134,16 @@ public class BPackage implements Parcelable {
         this.applicationInfo = aPackage.applicationInfo;
         this.mVersionName = aPackage.mVersionName;
         this.baseCodePath = aPackage.baseCodePath;
+        if (this.baseCodePath == null || this.baseCodePath.isEmpty()) {
+            if (aPackage.codePath != null && !aPackage.codePath.isEmpty()) {
+                this.baseCodePath = aPackage.codePath;
+            } else if (aPackage.applicationInfo != null && aPackage.applicationInfo.sourceDir != null) {
+                this.baseCodePath = aPackage.applicationInfo.sourceDir;
+            }
+        }
         this.mSharedUserLabel = aPackage.mSharedUserLabel;
-        this.configPreferences = aPackage.configPreferences;
-        this.reqFeatures = aPackage.reqFeatures;
+        this.configPreferences = aPackage.configPreferences != null ? aPackage.configPreferences : new ArrayList<>();
+        this.reqFeatures = aPackage.reqFeatures != null ? aPackage.reqFeatures : new ArrayList<>();
     }
 
     protected BPackage(Parcel in) {
@@ -226,7 +233,13 @@ public class BPackage implements Parcelable {
         this.baseCodePath = in.readString();
         this.mSharedUserLabel = in.readInt();
         this.configPreferences = in.createTypedArrayList(ConfigurationInfo.CREATOR);
+        if (this.configPreferences == null) {
+            this.configPreferences = new ArrayList<>();
+        }
         this.reqFeatures = in.createTypedArrayList(FeatureInfo.CREATOR);
+        if (this.reqFeatures == null) {
+            this.reqFeatures = new ArrayList<>();
+        }
         this.installOption = in.readParcelable(InstallOption.class.getClassLoader());
     }
 

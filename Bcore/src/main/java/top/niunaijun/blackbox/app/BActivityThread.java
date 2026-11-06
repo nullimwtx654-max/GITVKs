@@ -68,6 +68,7 @@ import top.niunaijun.blackbox.core.CrashHandler;
 import top.niunaijun.blackbox.core.IBActivityThread;
 import top.niunaijun.blackbox.core.IOCore;
 import top.niunaijun.blackbox.core.NativeCore;
+import top.niunaijun.blackbox.core.env.BEnvironment;
 import top.niunaijun.blackbox.core.env.VirtualRuntime;
 import top.niunaijun.blackbox.core.system.user.BUserHandle;
 import top.niunaijun.blackbox.entity.AppConfig;
@@ -338,11 +339,42 @@ public class BActivityThread extends IBActivityThread.Stub {
         }
 
         PackageInfo packageInfo = BlackBoxCore.getBPackageManager().getPackageInfo(packageName, PackageManager.GET_PROVIDERS | PackageManager.GET_META_DATA, BActivityThread.getUserId());
-        ApplicationInfo applicationInfo = packageInfo.applicationInfo;
-        if (packageInfo.providers == null) {
-            packageInfo.providers = new ProviderInfo[]{};
+        ApplicationInfo applicationInfo = packageInfo != null ? packageInfo.applicationInfo : null;
+        if (applicationInfo == null) {
+            applicationInfo = BlackBoxCore.getBPackageManager().getApplicationInfo(packageName, PackageManager.GET_META_DATA, BActivityThread.getUserId());
         }
-        mProviders.addAll(Arrays.asList(packageInfo.providers));
+        if (applicationInfo != null && (applicationInfo.sourceDir == null || applicationInfo.sourceDir.isEmpty() || !new File(applicationInfo.sourceDir).exists())) {
+            File baseApk = BEnvironment.getBaseApkDir(packageName);
+            if (baseApk != null && baseApk.exists() && baseApk.length() > 1024) {
+                applicationInfo.sourceDir = baseApk.getAbsolutePath();
+                applicationInfo.publicSourceDir = baseApk.getAbsolutePath();
+            } else if (top.niunaijun.blackbox.core.GmsCore.isBundledMicroGPackage(packageName)) {
+                String extracted = top.niunaijun.blackbox.core.GmsCore.extractBundledApkIfNeeded(packageName);
+                if (extracted != null) {
+                    applicationInfo.sourceDir = extracted;
+                    applicationInfo.publicSourceDir = extracted;
+                }
+            } else {
+                try {
+                    ApplicationInfo hostAi = BlackBoxCore.getPackageManager().getApplicationInfo(packageName, 0);
+                    if (hostAi != null && hostAi.sourceDir != null) {
+                        applicationInfo.sourceDir = hostAi.sourceDir;
+                        applicationInfo.publicSourceDir = hostAi.publicSourceDir != null ? hostAi.publicSourceDir : hostAi.sourceDir;
+                    }
+                } catch (Throwable ignored) {
+                }
+            }
+            if (applicationInfo.sourceDir == null || applicationInfo.sourceDir.isEmpty()) {
+                applicationInfo.sourceDir = BlackBoxCore.getContext().getApplicationInfo().sourceDir;
+                applicationInfo.publicSourceDir = applicationInfo.sourceDir;
+            }
+        }
+        if (applicationInfo != null) {
+            applicationInfo.flags |= ApplicationInfo.FLAG_HAS_CODE;
+        }
+        if (packageInfo != null && packageInfo.providers != null) {
+            mProviders.addAll(Arrays.asList(packageInfo.providers));
+        }
 
         Object boundApplication = BRActivityThread.get(BlackBoxCore.mainThread()).mBoundApplication();
 
@@ -350,6 +382,11 @@ public class BActivityThread extends IBActivityThread.Stub {
         Object loadedApk = BRContextImpl.get(packageContext).mPackageInfo();
         BRLoadedApk.get(loadedApk)._set_mSecurityViolation(false);
         BRLoadedApk.get(loadedApk)._set_mApplicationInfo(applicationInfo);
+        try {
+            Reflector.with(loadedApk).field("mAppDir").set(applicationInfo.sourceDir);
+            Reflector.with(loadedApk).field("mResDir").set(applicationInfo.publicSourceDir != null ? applicationInfo.publicSourceDir : applicationInfo.sourceDir);
+        } catch (Throwable ignored) {
+        }
 
         int targetSdkVersion = applicationInfo.targetSdkVersion;
         if (targetSdkVersion < Build.VERSION_CODES.GINGERBREAD) {
@@ -435,10 +472,19 @@ public class BActivityThread extends IBActivityThread.Stub {
                     Slog.e(TAG, "Fallback makeApplication also failed", e);
                 }
                 if (application == null) {
-                    Slog.w(TAG, "Creating minimal application context as fallback");
-                    application = (Application) packageContext;
+                    Slog.w(TAG, "Creating minimal Application instance via Instrumentation as fallback");
+                    try {
+                        ClassLoader cl = BRLoadedApk.get(loadedApk).getClassLoader();
+                        application = AppInstrumentation.get().newApplication(
+                                cl != null ? cl : BlackBoxCore.getContext().getClassLoader(),
+                                Application.class.getName(),
+                                packageContext);
+                        Reflector.with(loadedApk).field("mApplication").set(application);
+                    } catch (Throwable fallbackErr) {
+                        Slog.e(TAG, "Instrumentation.newApplication fallback failed", fallbackErr);
+                    }
                     if (application == null) {
-                        throw new RuntimeException("Unable to create application context");
+                        throw new RuntimeException("Unable to create application context for " + packageName);
                     }
                 }
             }

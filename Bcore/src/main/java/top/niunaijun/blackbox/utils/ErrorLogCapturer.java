@@ -109,6 +109,13 @@ public final class ErrorLogCapturer {
                     String pidToken = "(" + myPid + ")";
                     String pidTokenPadded = "( " + myPid + ")";
                     while ((line = reader.readLine()) != null) {
+                        if (line.contains("BBinder_init")
+                                || line.contains("VivoJsonResourceManager")
+                                || line.contains("call to OpenGL ES API with no current context")
+                                || line.contains("com.facebook.lite.provider.InstallReferrerProvider")
+                                || line.contains("Failed to find provider info for com.google.android.gms.chimera")) {
+                            continue;
+                        }
                         if (line.contains(pidToken)
                                 || line.contains(pidTokenPadded)
                                 || line.contains("AndroidRuntime")

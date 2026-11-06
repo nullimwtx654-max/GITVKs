@@ -25,6 +25,7 @@ import top.niunaijun.blackbox.utils.compat.ParceledListSliceCompat;
 
 public class INotificationManagerProxy extends BinderInvocationStub {
     public static final String TAG = "INotificationManagerProxy";
+    private static volatile String sNotificationDelegate = "com.google.android.gms";
 
     public INotificationManagerProxy() {
         super(BRNotificationManager.get().getService().asBinder());
@@ -43,7 +44,24 @@ public class INotificationManagerProxy extends BinderInvocationStub {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-
+        String methodName = method.getName();
+        if ("setNotificationDelegate".equals(methodName)) {
+            if (args != null && args.length >= 2 && args[1] instanceof String) {
+                sNotificationDelegate = (String) args[1];
+            } else if (args != null && args.length >= 2 && args[1] == null) {
+                sNotificationDelegate = null;
+            }
+            return null;
+        }
+        if ("getNotificationDelegate".equals(methodName)) {
+            return sNotificationDelegate;
+        }
+        if ("canNotifyAsPackage".equals(methodName)) {
+            return true;
+        }
+        if ("areNotificationsEnabled".equals(methodName) || "areNotificationsEnabledForPackage".equals(methodName)) {
+            return true;
+        }
         MethodParameterUtils.replaceAllAppPkg(args);
         return super.invoke(proxy, method, args);
     }

@@ -246,6 +246,22 @@ import top.niunaijun.blackbox.utils.compat.PackageParserCompat;
         try {
             PackageParser parser = PackageParserCompat.createParser(new File(file));
             PackageParser.Package aPackage = PackageParserCompat.parsePackage(parser, new File(file), 0);
+            if (aPackage != null) {
+                if (aPackage.baseCodePath == null || aPackage.baseCodePath.isEmpty()) {
+                    aPackage.baseCodePath = file;
+                }
+                if (aPackage.codePath == null || aPackage.codePath.isEmpty()) {
+                    aPackage.codePath = file;
+                }
+                if (aPackage.applicationInfo != null) {
+                    if (aPackage.applicationInfo.sourceDir == null || aPackage.applicationInfo.sourceDir.isEmpty()) {
+                        aPackage.applicationInfo.sourceDir = file;
+                    }
+                    if (aPackage.applicationInfo.publicSourceDir == null || aPackage.applicationInfo.publicSourceDir.isEmpty()) {
+                        aPackage.applicationInfo.publicSourceDir = file;
+                    }
+                }
+            }
             PackageParserCompat.collectCertificates(parser, aPackage, 0);
             return aPackage;
         } catch (Throwable t) {

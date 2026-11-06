@@ -59,6 +59,7 @@ public class IPackageManagerProxy extends BinderInvocationStub {
         PackageManager packageManager = BRContextImpl.get(systemContext).mPackageManager();
         if (packageManager != null) {
             BRPackageManager.get().disableApplicationInfoCache();
+            IPermissionManagerProxy.disablePermissionCaches();
             try {
                 Reflector.on("android.app.ApplicationPackageManager")
                         .field("mPM")
@@ -289,8 +290,13 @@ public class IPackageManagerProxy extends BinderInvocationStub {
             appInfo.packageName = packageName;
             appInfo.processName = packageName;
             appInfo.name = GmsCore.VENDING_PKG.equals(packageName) ? "Google Play Store" : "Google Play services";
-            appInfo.flags = ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP;
+            appInfo.flags = ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP | ApplicationInfo.FLAG_HAS_CODE;
             appInfo.enabled = true;
+            String extracted = GmsCore.extractBundledApkIfNeeded(packageName);
+            if (extracted != null && !extracted.isEmpty()) {
+                appInfo.sourceDir = extracted;
+                appInfo.publicSourceDir = extracted;
+            }
             packageInfo.applicationInfo = appInfo;
 
             packageInfo.signatures = GmsCore.getGoogleSignatures();
@@ -423,13 +429,20 @@ public class IPackageManagerProxy extends BinderInvocationStub {
             if (applicationInfo != null) {
                 return applicationInfo;
             }
-            if (GmsCore.VENDING_PKG.equals(packageName) || GmsCore.GSF_PKG.equals(packageName)) {
+            if (GmsCore.VENDING_PKG.equals(packageName)
+                    || GmsCore.GSF_PKG.equals(packageName)
+                    || GmsCore.GMS_PKG.equals(packageName)) {
                 ApplicationInfo hostApp = BlackBoxCore.getContext().getApplicationInfo();
                 ApplicationInfo ai = new ApplicationInfo(hostApp);
                 ai.packageName = packageName;
                 ai.processName = packageName;
-                ai.flags = ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP;
+                ai.flags = ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP | ApplicationInfo.FLAG_HAS_CODE;
                 ai.enabled = true;
+                String extracted = GmsCore.extractBundledApkIfNeeded(packageName);
+                if (extracted != null && !extracted.isEmpty()) {
+                    ai.sourceDir = extracted;
+                    ai.publicSourceDir = extracted;
+                }
                 return ai;
             }
             if (AppSystemEnv.isOpenPackage(packageName)) {
@@ -574,11 +587,15 @@ public class IPackageManagerProxy extends BinderInvocationStub {
     public static class SimpleAudioPermissionHook extends MethodHook {
         @Override
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
-            String permission = (String) args[0];
-            if (isAutoGrantedPermission(permission)) {
-                return PackageManager.PERMISSION_GRANTED;
-            }
-            return method.invoke(who, args);
+            return PackageManager.PERMISSION_GRANTED;
+        }
+    }
+
+    @ProxyMethod("checkUidPermission")
+    public static class CheckUidPermission extends MethodHook {
+        @Override
+        protected Object hook(Object who, Method method, Object[] args) throws Throwable {
+            return PackageManager.PERMISSION_GRANTED;
         }
     }
 
@@ -586,11 +603,7 @@ public class IPackageManagerProxy extends BinderInvocationStub {
     public static class CheckSelfPermission extends MethodHook {
         @Override
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
-            String permission = (String) args[0];
-            if (isAutoGrantedPermission(permission)) {
-                return PackageManager.PERMISSION_GRANTED;
-            }
-            return method.invoke(who, args);
+            return PackageManager.PERMISSION_GRANTED;
         }
     }
 

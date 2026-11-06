@@ -778,6 +778,14 @@ public class IActivityManagerProxy extends ClassInvocationStub {
         }
     }
 
+    @ProxyMethod("checkPermissionForDevice")
+    public static class checkPermissionForDevice extends MethodHook {
+        @Override
+        protected Object hook(Object who, Method method, Object[] args) throws Throwable {
+            return PackageManager.PERMISSION_GRANTED;
+        }
+    }
+
     @ProxyMethod("checkUriPermission")
     public static class checkUriPermission extends MethodHook {
         @Override

@@ -9,7 +9,6 @@ import android.content.pm.FeatureInfo;
 import android.content.pm.InstrumentationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PackageParser;
 import android.content.pm.PermissionInfo;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ServiceInfo;
@@ -18,14 +17,12 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Build;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
 import black.android.content.pm.BRApplicationInfoL;
 import black.android.content.pm.BRApplicationInfoN;
-import black.android.content.pm.BRPackageParserSigningDetails;
-import black.android.content.pm.BRSigningInfo;
-import black.android.content.pm.PackageParserSigningDetailsContext;
 import black.android.content.res.BRAssetManager;
 import top.niunaijun.blackbox.BlackBoxCore;
 import top.niunaijun.blackbox.core.GmsCore;
@@ -34,11 +31,13 @@ import top.niunaijun.blackbox.core.env.BEnvironment;
 import top.niunaijun.blackbox.entity.pm.InstallOption;
 import top.niunaijun.blackbox.utils.ArrayUtils;
 import top.niunaijun.blackbox.utils.FileUtils;
+import top.niunaijun.blackbox.utils.Slog;
 import top.niunaijun.blackbox.utils.compat.BuildCompat;
 
 
 @SuppressLint("SdCardPath")
 public class PackageManagerCompat {
+    private static final String TAG = "PackageManagerCompat";
 
     private static Signature[] getSpoofedSignatures(BPackage p) {
         if (p == null) {
@@ -69,7 +68,8 @@ public class PackageManagerCompat {
             PackageInfo packageInfo = null;
             try {
                 packageInfo = generatePackageInfo(p, flags, 0, 0, state, userId);
-            } catch (Throwable ignored) {
+            } catch (Throwable t) {
+                Slog.e(TAG, "generatePackageInfo failed for " + p.packageName, t);
             }
             return packageInfo;
         }
@@ -87,11 +87,12 @@ public class PackageManagerCompat {
         pi.versionName = p.mVersionName;
         pi.sharedUserId = p.mSharedUserId;
         pi.sharedUserLabel = p.mSharedUserLabel;
-        pi.applicationInfo = generateApplicationInfo(p, flags, state, userId);
+        ApplicationInfo sharedAppInfo = generateApplicationInfo(p, flags, state, userId);
+        pi.applicationInfo = sharedAppInfo;
 
         pi.firstInstallTime = firstInstallTime;
         pi.lastUpdateTime = lastUpdateTime;
-        if (!p.reqFeatures.isEmpty()) {
+        if (p.reqFeatures != null && !p.reqFeatures.isEmpty()) {
             FeatureInfo[] features = new FeatureInfo[p.reqFeatures.size()];
             p.reqFeatures.toArray(features);
             pi.reqFeatures = features;
@@ -112,7 +113,15 @@ public class PackageManagerCompat {
                 p.reqFeatures.toArray(pi.reqFeatures);
             }
         }
-        if ((flags & PackageManager.GET_ACTIVITIES) != 0) {
+        // Create a lightweight ApplicationInfo without duplicate app-level metaData Bundle for child components
+        // so packages with dozens of providers/services (like microG GmsCore) never exceed the 1MB Binder Parcel limit.
+        ApplicationInfo componentAppInfo = sharedAppInfo;
+        if (sharedAppInfo != null && sharedAppInfo.metaData != null) {
+            componentAppInfo = new ApplicationInfo(sharedAppInfo);
+            componentAppInfo.metaData = null;
+        }
+
+        if ((flags & PackageManager.GET_ACTIVITIES) != 0 && p.activities != null) {
             pi.activities = null;
             final int N = p.activities.size();
             if (N > 0) {
@@ -120,12 +129,16 @@ public class PackageManagerCompat {
                 final ActivityInfo[] res = new ActivityInfo[N];
                 for (int i = 0; i < N; i++) {
                     final BPackage.Activity a = p.activities.get(i);
-                    res[num++] = generateActivityInfo(a, flags, state, userId);
+                    ActivityInfo ai = generateActivityInfo(a, flags, state, userId);
+                    if (ai != null) {
+                        ai.applicationInfo = componentAppInfo;
+                        res[num++] = ai;
+                    }
                 }
                 pi.activities = ArrayUtils.trimToSize(res, num);
             }
         }
-        if ((flags & PackageManager.GET_RECEIVERS) != 0) {
+        if ((flags & PackageManager.GET_RECEIVERS) != 0 && p.receivers != null) {
             pi.receivers = null;
             final int N = p.receivers.size();
             if (N > 0) {
@@ -133,12 +146,16 @@ public class PackageManagerCompat {
                 final ActivityInfo[] res = new ActivityInfo[N];
                 for (int i = 0; i < N; i++) {
                     final BPackage.Activity a = p.receivers.get(i);
-                    res[num++] = generateActivityInfo(a, flags, state, userId);
+                    ActivityInfo ai = generateActivityInfo(a, flags, state, userId);
+                    if (ai != null) {
+                        ai.applicationInfo = componentAppInfo;
+                        res[num++] = ai;
+                    }
                 }
                 pi.receivers = ArrayUtils.trimToSize(res, num);
             }
         }
-        if ((flags & PackageManager.GET_SERVICES) != 0) {
+        if ((flags & PackageManager.GET_SERVICES) != 0 && p.services != null) {
             pi.services = null;
             final int N = p.services.size();
             if (N > 0) {
@@ -146,12 +163,16 @@ public class PackageManagerCompat {
                 final ServiceInfo[] res = new ServiceInfo[N];
                 for (int i = 0; i < N; i++) {
                     final BPackage.Service s = p.services.get(i);
-                    res[num++] = generateServiceInfo(s, flags, state, userId);
+                    ServiceInfo si = generateServiceInfo(s, flags, state, userId);
+                    if (si != null) {
+                        si.applicationInfo = componentAppInfo;
+                        res[num++] = si;
+                    }
                 }
                 pi.services = ArrayUtils.trimToSize(res, num);
             }
         }
-        if ((flags & PackageManager.GET_PROVIDERS) != 0) {
+        if ((flags & PackageManager.GET_PROVIDERS) != 0 && p.providers != null) {
             pi.providers = null;
             final int N = p.providers.size();
             if (N > 0) {
@@ -161,13 +182,14 @@ public class PackageManagerCompat {
                     final BPackage.Provider pr = p.providers.get(i);
                     ProviderInfo providerInfo = generateProviderInfo(pr, flags, state, userId);
                     if (providerInfo != null) {
+                        providerInfo.applicationInfo = componentAppInfo;
                         res[num++] = providerInfo;
                     }
                 }
                 pi.providers = ArrayUtils.trimToSize(res, num);
             }
         }
-        if ((flags & PackageManager.GET_INSTRUMENTATION) != 0) {
+        if ((flags & PackageManager.GET_INSTRUMENTATION) != 0 && p.instrumentation != null) {
             pi.instrumentation = null;
             int N = p.instrumentation.size();
             if (N > 0) {
@@ -180,7 +202,7 @@ public class PackageManagerCompat {
         }
         if ((flags & PackageManager.GET_PERMISSIONS) != 0) {
             pi.permissions = null;
-            int N = p.permissions.size();
+            int N = p.permissions != null ? p.permissions.size() : 0;
             if (N > 0) {
                 pi.permissions = new PermissionInfo[N];
                 for (int i = 0; i < N; i++) {
@@ -188,7 +210,7 @@ public class PackageManagerCompat {
                 }
             }
             pi.requestedPermissions = null;
-            N = p.requestedPermissions.size();
+            N = p.requestedPermissions != null ? p.requestedPermissions.size() : 0;
             if (N > 0) {
                 pi.requestedPermissions = new String[N];
                 pi.requestedPermissionsFlags = new int[N];
@@ -202,8 +224,10 @@ public class PackageManagerCompat {
 
         Signature[] spoofedSigs = getSpoofedSignatures(p);
         if (spoofedSigs != null) {
-            pi.signatures = spoofedSigs;
-            if (BuildCompat.isPie()) {
+            if ((flags & PackageManager.GET_SIGNATURES) != 0 || GmsCore.isGoogleAppOrService(p.packageName)) {
+                pi.signatures = spoofedSigs;
+            }
+            if (BuildCompat.isPie() && (flags & PackageManager.GET_SIGNING_CERTIFICATES) != 0) {
                 pi.signingInfo = GmsCore.createSigningInfo(spoofedSigs);
             }
         } else {
@@ -309,6 +333,51 @@ public class PackageManagerCompat {
         return ii;
     }
 
+    private static String resolveValidSourceDir(BPackage p, ApplicationInfo baseApplication) {
+        if (p == null) {
+            return baseApplication != null ? baseApplication.sourceDir : null;
+        }
+        // 1. Check p.baseCodePath if it points to an existing file
+        if (p.baseCodePath != null && !p.baseCodePath.isEmpty() && new File(p.baseCodePath).exists()) {
+            return p.baseCodePath;
+        }
+        // 2. Check Clone Box's virtual base.apk directory
+        File baseApk = BEnvironment.getBaseApkDir(p.packageName);
+        if (baseApk != null && baseApk.exists() && baseApk.length() > 1024) {
+            p.baseCodePath = baseApk.getAbsolutePath();
+            return p.baseCodePath;
+        }
+        // 3. Check p.applicationInfo.sourceDir
+        if (p.applicationInfo != null && p.applicationInfo.sourceDir != null
+                && !p.applicationInfo.sourceDir.isEmpty()
+                && new File(p.applicationInfo.sourceDir).exists()) {
+            p.baseCodePath = p.applicationInfo.sourceDir;
+            return p.baseCodePath;
+        }
+        // 4. If bundled microG package, extract asset directly to base.apk
+        if (GmsCore.isBundledMicroGPackage(p.packageName)) {
+            String extracted = GmsCore.extractBundledApkIfNeeded(p.packageName);
+            if (extracted != null && !extracted.isEmpty()) {
+                p.baseCodePath = extracted;
+                return extracted;
+            }
+        }
+        // 5. Check host PackageManager
+        try {
+            ApplicationInfo hostAi = BlackBoxCore.getPackageManager().getApplicationInfo(p.packageName, 0);
+            if (hostAi != null && hostAi.sourceDir != null && !hostAi.sourceDir.isEmpty()) {
+                p.baseCodePath = hostAi.sourceDir;
+                return hostAi.sourceDir;
+            }
+        } catch (Throwable ignored) {
+        }
+        // 6. Ultimate fallback so LoadedApk.makePaths never sees a null sourceDir
+        if (p.baseCodePath != null && !p.baseCodePath.isEmpty()) {
+            return p.baseCodePath;
+        }
+        return baseApplication != null ? baseApplication.sourceDir : "";
+    }
+
     public static ApplicationInfo generateApplicationInfo(BPackage p, int flags, BPackageUserState state, int userId) {
         if (!checkUseInstalledOrHidden(flags, state, p.applicationInfo)) {
             return null;
@@ -319,10 +388,10 @@ public class PackageManagerCompat {
         } catch (Exception e) {
             return null;
         }
-        String sourceDir = p.baseCodePath;
+        String sourceDir = resolveValidSourceDir(p, baseApplication);
         if (p.applicationInfo == null) {
-            PackageInfo archiveInfo = BlackBoxCore.getPackageManager().getPackageArchiveInfo(sourceDir, 0);
-            if (archiveInfo != null) {
+            PackageInfo archiveInfo = sourceDir != null ? BlackBoxCore.getPackageManager().getPackageArchiveInfo(sourceDir, 0) : null;
+            if (archiveInfo != null && archiveInfo.applicationInfo != null) {
                 p.applicationInfo = archiveInfo.applicationInfo;
             } else {
                 p.applicationInfo = new ApplicationInfo();
@@ -330,11 +399,11 @@ public class PackageManagerCompat {
             }
         }
         ApplicationInfo ai = new ApplicationInfo(p.applicationInfo);
-        if (p.mAppMetaData != null) {
+        if ((flags & PackageManager.GET_META_DATA) != 0 && p.mAppMetaData != null) {
             ai.metaData = p.mAppMetaData;
         }
         ai.dataDir = BEnvironment.getDataDir(ai.packageName, userId).getAbsolutePath();
-        if (!p.installOption.isFlag(InstallOption.FLAG_SYSTEM)) {
+        if (p.installOption == null || !p.installOption.isFlag(InstallOption.FLAG_SYSTEM)) {
             ai.nativeLibraryDir = BEnvironment.getAppLibDir(ai.packageName).getAbsolutePath();
             ai.splitSourceDirs = null;
             ai.splitPublicSourceDirs = null;
@@ -343,6 +412,7 @@ public class PackageManagerCompat {
         ai.publicSourceDir = sourceDir;
         ai.sourceDir = sourceDir;
         ai.uid = BlackBoxCore.getHostUid();
+        ai.flags |= ApplicationInfo.FLAG_HAS_CODE;
 
         if (GmsCore.isGoogleAppOrService(p.packageName)) {
             ai.flags |= ApplicationInfo.FLAG_SYSTEM | ApplicationInfo.FLAG_UPDATED_SYSTEM_APP;
@@ -405,7 +475,10 @@ public class PackageManagerCompat {
         BPackageSettings ps = BPackageManagerService.get().getBPackageSetting(appInfo.packageName);
         if (ps != null) {
             AssetManager assets = BRAssetManager.get()._new();
-            BRAssetManager.get(assets).addAssetPath(ps.pkg.baseCodePath);
+            String codePath = resolveValidSourceDir(ps.pkg, appInfo);
+            if (codePath != null) {
+                BRAssetManager.get(assets).addAssetPath(codePath);
+            }
             Resources hostRes = context.getResources();
             return new Resources(assets, hostRes.getDisplayMetrics(), hostRes.getConfiguration());
         }

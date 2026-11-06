@@ -55,6 +55,7 @@ public class ContextCompat {
             
             BRContextImpl.get(context)._set_mPackageManager(null);
             try {
+                top.niunaijun.blackbox.fake.service.IPermissionManagerProxy.disablePermissionCaches();
                 context.getPackageManager();
             } catch (Throwable e) {
                 e.printStackTrace();

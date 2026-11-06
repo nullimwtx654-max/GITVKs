@@ -3,17 +3,16 @@ package top.niunaijun.blackbox.core;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageParser;
 import android.content.pm.Signature;
 import android.content.pm.SigningInfo;
-import android.os.Build;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -82,6 +81,47 @@ public class GmsCore {
         return null;
     }
 
+    public static boolean isBundledMicroGPackage(String packageName) {
+        return packageName != null && BUNDLED_GMS_ASSETS.containsKey(packageName);
+    }
+
+    public static String extractBundledApkIfNeeded(String packageName) {
+        if (packageName == null) return null;
+        File baseApk = BEnvironment.getBaseApkDir(packageName);
+        if (baseApk != null && baseApk.exists() && baseApk.length() > 1024) {
+            return baseApk.getAbsolutePath();
+        }
+        String assetPath = BUNDLED_GMS_ASSETS.get(packageName);
+        if (assetPath == null) return null;
+        try {
+            if (baseApk != null) {
+                File parent = baseApk.getParentFile();
+                if (parent != null && !parent.exists()) {
+                    parent.mkdirs();
+                }
+                Context context = BlackBoxCore.getContext();
+                if (context != null) {
+                    try (InputStream is = context.getAssets().open(assetPath);
+                         FileOutputStream fos = new FileOutputStream(baseApk)) {
+                        byte[] buf = new byte[8192];
+                        int len;
+                        while ((len = is.read(buf)) != -1) {
+                            fos.write(buf, 0, len);
+                        }
+                        fos.flush();
+                    }
+                    baseApk.setReadable(true, false);
+                    if (baseApk.exists() && baseApk.length() > 1024) {
+                        return baseApk.getAbsolutePath();
+                    }
+                }
+            }
+        } catch (Throwable ignored) {
+        }
+        File cached = extractAssetToCache(assetPath, packageName + "_bundled.apk");
+        return cached != null && cached.exists() ? cached.getAbsolutePath() : null;
+    }
+
     @SuppressWarnings("NewApi")
     public static SigningInfo createGoogleSigningInfo() {
         return createSigningInfo(getGoogleSignatures());
@@ -108,9 +148,11 @@ public class GmsCore {
                     ctor2.setAccessible(true);
                     signingDetails = ctor2.newInstance(signatures, 3);
                 } catch (Throwable ignored2) {
-                    signingDetails = PackageParser.SigningDetails.UNKNOWN;
-                    BRPackageParserSigningDetails.get(signingDetails)._set_signatures(signatures);
+                    return null;
                 }
+            }
+            if (signingDetails == null) {
+                return null;
             }
             return BRSigningInfo.get()._new(signingDetails);
         } catch (Throwable t) {
@@ -223,15 +265,46 @@ public class GmsCore {
         }
     }
 
+    /**
+     * Checks whether the given package is properly installed as a standalone bundled microG APK
+     * (in BEnvironment.getBaseApkDir(pkgName)), NOT as a broken host FLAG_SYSTEM reference.
+     */
+    private static boolean isValidBundledMicroGInstall(String pkgName, int userId) {
+        try {
+            BlackBoxCore blackBoxCore = BlackBoxCore.get();
+            if (!blackBoxCore.isInstalled(pkgName, userId)) {
+                return false;
+            }
+            File baseApk = BEnvironment.getBaseApkDir(pkgName);
+            if (baseApk == null || !baseApk.exists() || baseApk.length() < 10_000) {
+                return false;
+            }
+            ApplicationInfo ai = BlackBoxCore.getBPackageManager().getApplicationInfo(pkgName, 0, userId);
+            if (ai == null || ai.sourceDir == null || !new File(ai.sourceDir).exists()) {
+                return false;
+            }
+            return ai.sourceDir.equals(baseApk.getAbsolutePath());
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
     private static InstallResult installBundledMicroG(int userId) {
         BlackBoxCore blackBoxCore = BlackBoxCore.get();
         boolean installedAny = false;
         for (Map.Entry<String, String> entry : BUNDLED_GMS_ASSETS.entrySet()) {
             String pkgName = entry.getKey();
             String assetPath = entry.getValue();
-            if (blackBoxCore.isInstalled(pkgName, userId)) {
+            if (isValidBundledMicroGInstall(pkgName, userId)) {
                 installedAny = true;
                 continue;
+            }
+            if (blackBoxCore.isInstalled(pkgName, userId)) {
+                Slog.w(TAG, "Detected legacy/system GMS install for " + pkgName + ", replacing with bundled microG APK");
+                try {
+                    blackBoxCore.uninstallPackage(pkgName);
+                } catch (Throwable ignored) {
+                }
             }
             File tempApk = extractAssetToCache(assetPath, pkgName + "_bundled.apk");
             if (tempApk != null && tempApk.exists() && tempApk.length() > 0) {
@@ -248,6 +321,15 @@ public class GmsCore {
                 }
             }
         }
+        // Remove any legacy host FLAG_SYSTEM Google packages that conflict with microG
+        for (String legacyPkg : GOOGLE_SERVICE) {
+            if (!BUNDLED_GMS_ASSETS.containsKey(legacyPkg) && blackBoxCore.isInstalled(legacyPkg, userId)) {
+                try {
+                    blackBoxCore.uninstallPackageAsUser(legacyPkg, userId);
+                } catch (Throwable ignored) {
+                }
+            }
+        }
         if (installedAny && blackBoxCore.isInstalled(GMS_PKG, userId)) {
             preconfigureMicroGSettings(userId);
             InstallResult ok = new InstallResult();
@@ -255,6 +337,19 @@ public class GmsCore {
             return ok;
         }
         return null;
+    }
+
+    public static void ensureGmsInstalled(int userId) {
+        try {
+            if (!isValidBundledMicroGInstall(GMS_PKG, userId)
+                    || !isValidBundledMicroGInstall(VENDING_PKG, userId)) {
+                installBundledMicroG(userId);
+            } else {
+                preconfigureMicroGSettings(userId);
+            }
+        } catch (Throwable t) {
+            Slog.w(TAG, "ensureGmsInstalled failed for user " + userId + ": " + t.getMessage());
+        }
     }
 
     private static InstallResult installPackages(Set<String> list, int userId) {
@@ -284,18 +379,18 @@ public class GmsCore {
     }
 
     public static InstallResult installGApps(int userId) {
-        // 1. Always prefer bundled microG GmsCore.apk + FakeStore.apk in assets/gms/
+        // 1. Always install standalone bundled microG (GmsCore.apk + FakeStore.apk)
         InstallResult bundledResult = installBundledMicroG(userId);
+        if (bundledResult != null && bundledResult.success) {
+            return bundledResult;
+        }
 
-        // 2. Also install any supplementary Google packages present on the host if not already installed
+        // 2. Fallback to host packages ONLY if bundled assets are absent
         Set<String> googleApps = new HashSet<>();
         googleApps.addAll(GOOGLE_SERVICE);
         googleApps.addAll(GOOGLE_APP);
 
         InstallResult hostResult = installPackages(googleApps, userId);
-        if (bundledResult != null && bundledResult.success) {
-            return bundledResult;
-        }
         if (!hostResult.success) {
             uninstallGApps(userId);
             return hostResult;
@@ -331,13 +426,7 @@ public class GmsCore {
 
     public static boolean launchGoogleLogin(int userId) {
         try {
-            if (!isInstalledGoogleService(userId)) {
-                InstallResult res = installGApps(userId);
-                if (res == null || !res.success) {
-                    Slog.w(TAG, "Failed to auto-install GMS before Google Login for user " + userId);
-                }
-            }
-            preconfigureMicroGSettings(userId);
+            ensureGmsInstalled(userId);
             Intent intent = new Intent();
             intent.setComponent(new ComponentName(GMS_PKG, "org.microg.gms.auth.login.LoginActivity"));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -356,10 +445,7 @@ public class GmsCore {
 
     public static boolean launchMicroGSettings(int userId) {
         try {
-            if (!isInstalledGoogleService(userId)) {
-                installGApps(userId);
-            }
-            preconfigureMicroGSettings(userId);
+            ensureGmsInstalled(userId);
             Intent intent = new Intent();
             intent.setComponent(new ComponentName(GMS_PKG, "org.microg.gms.ui.MainSettingsActivity"));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -306,7 +306,14 @@ public class BPackageManager extends BlackManager<IBPackageManagerService> {
             }
             return service.getPackageInfo(packageName, flags, userId);
         } catch (RemoteException e) {
-            Log.e(TAG, "RemoteException in getPackageInfo for " + packageName, e);
+            Log.e(TAG, "RemoteException in getPackageInfo for " + packageName + " (flags=" + flags + "), retrying without GET_META_DATA", e);
+            try {
+                IBPackageManagerService service = getServiceWithFallback();
+                if (service != null && (flags & android.content.pm.PackageManager.GET_META_DATA) != 0) {
+                    return service.getPackageInfo(packageName, flags & ~android.content.pm.PackageManager.GET_META_DATA, userId);
+                }
+            } catch (Throwable ignored) {
+            }
             return createFallbackPackageInfo(packageName, flags, userId);
         } catch (Exception e) {
             Log.e(TAG, "Exception in getPackageInfo for " + packageName, e);
@@ -687,31 +694,38 @@ public class BPackageManager extends BlackManager<IBPackageManagerService> {
         Log.w(TAG, "Creating fallback ApplicationInfo for " + packageName);
         ApplicationInfo info = new ApplicationInfo();
         info.packageName = packageName;
+        info.processName = packageName;
         info.flags = flags;
-        info.uid = 0; 
-        
-        
-        
+        info.uid = BlackBoxCore.getHostUid();
+
         String apkPath = findActualApkPath(packageName);
-        if (apkPath != null) {
-            info.sourceDir = apkPath;
-            info.publicSourceDir = apkPath;
-        } else {
-            
-            Log.w(TAG, "No APK found for " + packageName + ", using null paths to prevent I/O errors");
-            info.sourceDir = null; 
-            info.publicSourceDir = null; 
+        if (apkPath == null || apkPath.isEmpty()) {
+            try {
+                ApplicationInfo hostInfo = BlackBoxCore.getContext().getApplicationInfo();
+                if (hostInfo != null) {
+                    apkPath = hostInfo.sourceDir;
+                }
+            } catch (Throwable ignored) {
+            }
         }
-        
-        info.dataDir = "/data/data/" + packageName;
-        info.nativeLibraryDir = "/data/app-lib/" + packageName;
+        info.sourceDir = apkPath;
+        info.publicSourceDir = apkPath;
+
+        try {
+            info.dataDir = top.niunaijun.blackbox.core.env.BEnvironment.getDataDir(packageName, userId).getAbsolutePath();
+            info.deviceProtectedDataDir = top.niunaijun.blackbox.core.env.BEnvironment.getDeDataDir(packageName, userId).getAbsolutePath();
+            info.nativeLibraryDir = top.niunaijun.blackbox.core.env.BEnvironment.getAppLibDir(packageName).getAbsolutePath();
+        } catch (Throwable t) {
+            info.dataDir = "/data/data/" + packageName;
+            info.nativeLibraryDir = "/data/app-lib/" + packageName;
+        }
         info.metaData = new Bundle();
         info.splitNames = new String[]{};
-        
-        
+
         info.flags |= ApplicationInfo.FLAG_ALLOW_BACKUP;
         info.flags |= ApplicationInfo.FLAG_SUPPORTS_RTL;
-        
+        info.flags |= ApplicationInfo.FLAG_HAS_CODE;
+
         return info;
     }
 
@@ -723,9 +737,25 @@ public class BPackageManager extends BlackManager<IBPackageManagerService> {
         }
         sIsFindingApkPath = true;
         try {
-            
-            
-            Log.d(TAG, "Skipping PackageManager call to prevent recursion for " + packageName);
+            // 1. Check virtual base.apk in BEnvironment first
+            try {
+                File baseApk = top.niunaijun.blackbox.core.env.BEnvironment.getBaseApkDir(packageName);
+                if (baseApk != null && isValidApkPath(baseApk.getAbsolutePath())) {
+                    return baseApk.getAbsolutePath();
+                }
+            } catch (Throwable ignored) {
+            }
+            // 2. If bundled microG package, extract from assets if needed
+            try {
+                if (top.niunaijun.blackbox.core.GmsCore.isBundledMicroGPackage(packageName)) {
+                    String extracted = top.niunaijun.blackbox.core.GmsCore.extractBundledApkIfNeeded(packageName);
+                    if (extracted != null && isValidApkPath(extracted)) {
+                        return extracted;
+                    }
+                }
+            } catch (Throwable ignored) {
+            }
+            Log.d(TAG, "Searching common paths for " + packageName);
             
             
             String[] commonPaths = {
