@@ -1,0 +1,21 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="108dp"
+        android:height="108dp"
+        android:viewportWidth="108"
+        android:viewportHeight="108">
+    <!-- Back Clone Box Cube -->
+    <path
+            android:fillColor="#64B5F6"
+            android:pathData="M42,28L76,28A6,6 0,0 1,82 34L82,68A6,6 0,0 1,76 74L42,74A6,6 0,0 1,36 68L36,34A6,6 0,0 1,42 28Z" />
+    <!-- Front Clone Box Cube -->
+    <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M32,36L66,36A6,6 0,0 1,72 42L72,76A6,6 0,0 1,66 82L32,82A6,6 0,0 1,26 76L26,42A6,6 0,0 1,32 36Z" />
+    <!-- Inner Blue Isometric Core -->
+    <path
+            android:fillColor="#1565C0"
+            android:pathData="M49,45L61,52L61,66L49,73L37,66L37,52Z" />
+    <path
+            android:fillColor="#42A5F5"
+            android:pathData="M49,45L61,52L49,59L37,52Z" />
+</vector>

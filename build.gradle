@@ -1,0 +1,51 @@
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.jetbrains.kotlin.android) apply false
+    alias(libs.plugins.android.library) apply false
+}
+
+def resolveNdkVersion() {
+    def envNdk = System.getenv("ANDROID_NDK_VERSION")
+    if (envNdk != null && !envNdk.isEmpty()) {
+        return envNdk
+    }
+    def sdkDir = null
+    try {
+        def localPropsFile = rootProject.file("local.properties")
+        if (localPropsFile.exists()) {
+            def props = new Properties()
+            localPropsFile.withInputStream { props.load(it) }
+            sdkDir = props.getProperty("sdk.dir")
+        }
+    } catch (Throwable ignored) {
+    }
+    if (sdkDir == null || sdkDir.isEmpty()) {
+        sdkDir = System.getenv("ANDROID_HOME") ?: System.getenv("ANDROID_SDK_ROOT")
+    }
+    if (sdkDir != null) {
+        for (def candidate : ["27.3.13750724", "29.0.14206865", "29.0.13846066", "28.0.13004108", "27.2.12479018", "27.0.12077973"]) {
+            if (new File(sdkDir, "ndk/" + candidate).exists()) {
+                return candidate
+            }
+        }
+        def ndkParent = new File(sdkDir, "ndk")
+        if (ndkParent.exists() && ndkParent.listFiles() != null) {
+            def dirs = ndkParent.listFiles().findAll { it.isDirectory() && new File(it, "source.properties").exists() }.sort { it.name }
+            if (!dirs.isEmpty()) {
+                return dirs.last().name
+            }
+        }
+    }
+    return "27.3.13750724"
+}
+
+ext {
+    compileSdkVersion = 35
+    targetSdkVersion = 28
+    minSdk = 21
+    versionCode = 400
+    versionName = "4.0.0"
+    xVersion = '1.1.0'
+    hiddenApiBypass = '4.3'
+    ndkVersion = resolveNdkVersion()
+}
